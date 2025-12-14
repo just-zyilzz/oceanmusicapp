@@ -1,0 +1,27 @@
+{
+    "name": "appmusic",
+    "version": "2.0.0",
+    "description": "ArchiveTune Web - Modern music player with React + Tailwind CSS",
+    "type": "module",
+    "scripts": {
+        "dev": "cd client && npm run dev",
+        "build": "cd client && npm run build",
+        "preview": "cd client && npm run preview",
+        "server": "node server.js",
+        "vercel-build": "cd client && npm install && npm run build"
+    },
+    "keywords": [
+        "music",
+        "streaming",
+        "youtube-music",
+        "react",
+        "tailwindcss"
+    ],
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "@distube/ytdl-core": "^4.16.12",
+        "cors": "^2.8.5",
+        "express": "^4.18.2"
+    }
+}

@@ -1,0 +1,157 @@
+{
+    "songs": [
+        {
+            "id": "1",
+            "videoId": "dQw4w9WgXcQ",
+            "title": "Blinding Lights",
+            "artist": "The Weeknd",
+            "album": "After Hours",
+            "duration": "3:20",
+            "albumArt": "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=400&h=400&fit=crop",
+            "accentColor": "#8B5CF6"
+        },
+        {
+            "id": "2",
+            "videoId": "abc123",
+            "title": "Levitating",
+            "artist": "Dua Lipa",
+            "album": "Future Nostalgia",
+            "duration": "3:23",
+            "albumArt": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop",
+            "accentColor": "#EC4899"
+        },
+        {
+            "id": "3",
+            "videoId": "def456",
+            "title": "Peaches",
+            "artist": "Justin Bieber",
+            "album": "Justice",
+            "duration": "3:18",
+            "albumArt": "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400&h=400&fit=crop",
+            "accentColor": "#F59E0B"
+        },
+        {
+            "id": "4",
+            "videoId": "ghi789",
+            "title": "good 4 u",
+            "artist": "Olivia Rodrigo",
+            "album": "SOUR",
+            "duration": "2:58",
+            "albumArt": "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400&h=400&fit=crop",
+            "accentColor": "#EF4444"
+        },
+        {
+            "id": "5",
+            "videoId": "jkl012",
+            "title": "Stay",
+            "artist": "The Kid LAROI & Justin Bieber",
+            "album": "Stay",
+            "duration": "2:21",
+            "albumArt": "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&h=400&fit=crop",
+            "accentColor": "#3B82F6"
+        },
+        {
+            "id": "6",
+            "videoId": "mno345",
+            "title": "Heat Waves",
+            "artist": "Glass Animals",
+            "album": "Dreamland",
+            "duration": "3:59",
+            "albumArt": "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&h=400&fit=crop",
+            "accentColor": "#10B981"
+        },
+        {
+            "id": "7",
+            "videoId": "pqr678",
+            "title": "Shivers",
+            "artist": "Ed Sheeran",
+            "album": "=",
+            "duration": "3:27",
+            "albumArt": "https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?w=400&h=400&fit=crop",
+            "accentColor": "#06B6D4"
+        },
+        {
+            "id": "8",
+            "videoId": "stu901",
+            "title": "Save Your Tears",
+            "artist": "The Weeknd & Ariana Grande",
+            "album": "After Hours",
+            "duration": "3:35",
+            "albumArt": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop",
+            "accentColor": "#A855F7"
+        }
+    ],
+    "artists": [
+        {
+            "id": "art1",
+            "name": "The Weeknd",
+            "photo": "https://images.unsplash.com/photo-1601233749202-95d04d5b3c00?w=600&h=600&fit=crop",
+            "totalSongs": 156,
+            "totalAlbums": 8,
+            "topSongs": [
+                "1",
+                "8"
+            ]
+        },
+        {
+            "id": "art2",
+            "name": "Dua Lipa",
+            "photo": "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&h=600&fit=crop",
+            "totalSongs": 89,
+            "totalAlbums": 5,
+            "topSongs": [
+                "2"
+            ]
+        }
+    ],
+    "recentlyPlayed": [
+        "1",
+        "3",
+        "5",
+        "2"
+    ],
+    "quickPicks": [
+        "1",
+        "2",
+        "3",
+        "4"
+    ],
+    "lyrics": {
+        "1": {
+            "lines": [
+                {
+                    "time": 0,
+                    "text": "I've been tryna call"
+                },
+                {
+                    "time": 2.5,
+                    "text": "I've been on my own for long enough"
+                },
+                {
+                    "time": 5.0,
+                    "text": "Maybe you can show me how to love"
+                },
+                {
+                    "time": 8.5,
+                    "text": "Maybe"
+                },
+                {
+                    "time": 12.0,
+                    "text": "I'm going through withdrawals"
+                },
+                {
+                    "time": 15.0,
+                    "text": "You don't even have to do too much"
+                },
+                {
+                    "time": 18.0,
+                    "text": "You can turn me on with just a touch"
+                },
+                {
+                    "time": 21.5,
+                    "text": "Baby"
+                }
+            ]
+        }
+    }
+}
