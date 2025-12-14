@@ -1,3 +1,4 @@
+import { getYouTube } from '../lib/youtube.js';
 import ytdl from '@distube/ytdl-core';
 
 export default async (req, res) => {
@@ -7,54 +8,51 @@ export default async (req, res) => {
     if (req.method === 'OPTIONS') return res.status(200).end();
 
     try {
-        // Support both GET and POST methods
         const videoId = req.method === 'POST'
             ? (req.body?.videoId || req.body?.id)
             : (req.query.videoId || req.query.id);
 
         if (!videoId) return res.status(400).json({ error: 'videoId required' });
 
-        console.log(`Fetching stream for: ${videoId}`);
+        // Method 1: Try Innertube (youtubei.js)
+        try {
+            const yt = await getYouTube();
+            const info = await yt.getBasicInfo(videoId);
+            const streamingData = await yt.getStreamingData(videoId, { type: 'audio', quality: 'best' });
 
-        // Check if video is available
-        const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
-        const isValid = await ytdl.validateURL(videoUrl);
-
-        if (!isValid) {
-            return res.status(404).json({ error: 'Invalid YouTube URL or video not found' });
+            if (streamingData && streamingData.url) {
+                return res.json({
+                    success: true,
+                    videoId,
+                    title: info.basic_info.title,
+                    artist: info.basic_info.author,
+                    thumbnail: info.basic_info.thumbnail?.[0]?.url,
+                    streamUrl: streamingData.url,
+                    duration: info.basic_info.duration * 1000
+                });
+            }
+        } catch (e) {
+            console.log('Innertube stream failed, trying ytdl...', e.message);
         }
 
-        // Get video info
-        const info = await ytdl.getInfo(videoUrl);
+        // Method 2: Fallback to ytdl-core
+        const info = await ytdl.getInfo(videoId);
+        const format = ytdl.chooseFormat(info.formats, { quality: 'highestaudio' });
 
-        // Get audio formats only
-        const audioFormats = ytdl.filterFormats(info.formats, 'audioonly');
+        if (!format) throw new Error('No audio format found');
 
-        if (audioFormats.length === 0) {
-            return res.status(404).json({ error: 'No audio stream found' });
-        }
-
-        // Get best audio quality (highest bitrate)
-        const bestAudio = audioFormats.reduce((best, format) => {
-            return (format.audioBitrate || 0) > (best.audioBitrate || 0) ? format : best;
-        });
-
-        const basicInfo = info.videoDetails;
-
-        return res.json({
+        res.json({
             success: true,
             videoId,
-            title: basicInfo.title,
-            artist: basicInfo.author?.name || basicInfo.ownerChannelName || 'Unknown',
-            thumbnail: basicInfo.thumbnails?.[0]?.url || '',
-            streamUrl: bestAudio.url,
-            duration: parseInt(basicInfo.lengthSeconds) * 1000, // Convert to ms
-            quality: bestAudio.qualityLabel || 'audio',
-            bitrate: bestAudio.audioBitrate || 128
+            title: info.videoDetails.title,
+            artist: info.videoDetails.author.name,
+            thumbnail: info.videoDetails.thumbnails[0].url,
+            streamUrl: format.url,
+            duration: parseInt(info.videoDetails.lengthSeconds) * 1000
         });
 
     } catch (error) {
         console.error('Song API Error:', error);
-        return res.status(500).json({ success: false, error: error.message });
+        res.status(500).json({ error: error.message });
     }
 };
