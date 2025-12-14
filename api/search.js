@@ -1,4 +1,4 @@
-import { ytSearch } from '../lib/yt-downloader.js';
+import { searchMusic } from '../lib/youtube.js';
 
 export default async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -15,25 +15,28 @@ export default async (req, res) => {
             return res.status(400).json({ error: 'Query required' });
         }
 
-        const rawResults = await ytSearch(query);
+        console.log('Searching for:', query);
 
-        // Filter and map to expected format
-        const results = rawResults
-            .filter(item => item.type === 'video')
-            .map(item => ({
-                id: item.videoId,
-                videoId: item.videoId,
-                title: item.title,
-                artist: item.author?.name || 'Unknown',
-                album: '', // yt-search doesn't give album
-                duration: item.duration?.seconds * 1000 || 0,
-                thumbnail: item.thumbnail || item.image || '',
-                artists: item.author ? [{ name: item.author.name }] : []
-            }));
+        const searchResults = await searchMusic(query);
+
+        // Filter to only songs/videos
+        const songs = (searchResults.contents?.results || [])
+            .filter(item => item.type === 'Song' || item.type === 'Video')
+            .map(song => ({
+                id: song.id,
+                videoId: song.id,
+                title: song.title,
+                artist: song.artists?.[0]?.name || song.author?.name || 'Unknown',
+                album: song.album?.name || '',
+                duration: (song.duration?.seconds || 0) * 1000,
+                thumbnail: song.thumbnails?.[0]?.url?.replace('w60-h60', 'w400-h400') || `https://i.ytimg.com/vi/${song.id}/hqdefault.jpg`,
+                artists: song.artists || (song.author ? [{ name: song.author.name }] : [])
+            }))
+            .slice(0, 20); // Limit to 20 results
 
         res.json({
             success: true,
-            results
+            results: songs
         });
 
     } catch (error) {
