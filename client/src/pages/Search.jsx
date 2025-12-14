@@ -1,7 +1,7 @@
 import { Search as SearchIcon } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import SongCard from '../components/SongCard';
-import mockData from '../data/mockData.json';
+import { searchSongs } from '../utils/api';
 
 export default function Search() {
     const [query, setQuery] = useState('');
@@ -20,27 +20,17 @@ export default function Search() {
         setLoading(true);
         setSearched(true);
 
-        // Simulate slight delay for better UX
-        const timeoutId = setTimeout(() => {
-            const filtered = filterSongs(query);
-            setResults(filtered);
+        // Debounce API calls for better UX
+        const timeoutId = setTimeout(async () => {
+            const searchResults = await searchSongs(query, 20);
+            setResults(searchResults);
             setLoading(false);
-        }, 300);
+        }, 500);
 
         return () => clearTimeout(timeoutId);
     }, [query]);
 
-    const filterSongs = (searchQuery) => {
-        const lowerQuery = searchQuery.toLowerCase().trim();
 
-        return mockData.songs.filter(song => {
-            const titleMatch = song.title.toLowerCase().includes(lowerQuery);
-            const artistMatch = song.artist.toLowerCase().includes(lowerQuery);
-            const albumMatch = song.album?.toLowerCase().includes(lowerQuery) || false;
-
-            return titleMatch || artistMatch || albumMatch;
-        });
-    };
 
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {

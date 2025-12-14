@@ -1,5 +1,7 @@
-// API base URL - development
-const API_BASE_URL = 'http://localhost:3000';
+// API base URL - auto-detect environment
+const API_BASE_URL = typeof window !== 'undefined' && window.location.hostname === 'localhost'
+    ? 'http://localhost:3000'  // Development
+    : '';  // Production (use relative path, Vercel handles routing)
 
 /**
  * Search for songs on YouTube Music
@@ -9,9 +11,19 @@ const API_BASE_URL = 'http://localhost:3000';
  */
 export async function searchSongs(query, limit = 20) {
     try {
-        const response = await fetch(
+        // Try GET first
+        let response = await fetch(
             `${API_BASE_URL}/api/search?query=${encodeURIComponent(query)}&type=song&limit=${limit}`
         );
+
+        // Fallback to POST if GET fails
+        if (!response.ok) {
+            response = await fetch(`${API_BASE_URL}/api/search`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query, type: 'song', limit })
+            });
+        }
 
         if (!response.ok) {
             throw new Error('Search failed');
@@ -43,7 +55,17 @@ export async function searchSongs(query, limit = 20) {
  */
 export async function getSuggestions() {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/suggestions`);
+        // Try GET first
+        let response = await fetch(`${API_BASE_URL}/api/suggestions`);
+
+        // Fallback to POST if GET fails
+        if (!response.ok) {
+            response = await fetch(`${API_BASE_URL}/api/suggestions`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({})
+            });
+        }
 
         if (!response.ok) {
             throw new Error('Failed to fetch suggestions');
@@ -76,7 +98,17 @@ export async function getSuggestions() {
  */
 export async function getSongDetails(videoId) {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/song?videoId=${videoId}`);
+        // Try GET first
+        let response = await fetch(`${API_BASE_URL}/api/song?videoId=${videoId}`);
+
+        // Fallback to POST if GET fails
+        if (!response.ok) {
+            response = await fetch(`${API_BASE_URL}/api/song`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ videoId })
+            });
+        }
 
         if (!response.ok) {
             throw new Error('Failed to fetch song details');
@@ -96,7 +128,17 @@ export async function getSongDetails(videoId) {
  */
 export async function getLyrics(videoId) {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/lyrics?videoId=${videoId}`);
+        // Try GET first
+        let response = await fetch(`${API_BASE_URL}/api/lyrics?videoId=${videoId}`);
+
+        // Fallback to POST if GET fails
+        if (!response.ok) {
+            response = await fetch(`${API_BASE_URL}/api/lyrics`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ videoId })
+            });
+        }
 
         if (!response.ok) {
             return null;

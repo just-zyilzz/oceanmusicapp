@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from 'react';
 import mockData from '../data/mockData.json';
+import { getSongDetails } from '../utils/api';
 
 const PlayerContext = createContext();
 
@@ -9,40 +10,50 @@ export function PlayerProvider({ children }) {
     const [queue, setQueue] = useState(mockData.songs);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [audioUrl, setAudioUrl] = useState(null);
+    const [isLoadingAudio, setIsLoadingAudio] = useState(false);
 
-    // Mock audio URL for testing (free audio sample from freesound.org)
-    // In production, this would be fetched from backend API
-    const MOCK_AUDIO_URL = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
-
-    const playSong = (song) => {
+    const playSong = async (song) => {
         setCurrentSong(song);
-        setIsPlaying(true);
         const index = queue.findIndex(s => s.id === song.id);
         if (index !== -1) setCurrentIndex(index);
 
-        // Set mock audio URL for development/testing
-        // In production, fetch actual stream URL from API: getSongDetails(song.videoId)
-        setAudioUrl(MOCK_AUDIO_URL);
+        // Fetch real streaming URL from API
+        if (song.videoId) {
+            setIsLoadingAudio(true);
+            try {
+                const songDetails = await getSongDetails(song.videoId);
+                if (songDetails && songDetails.streamUrl) {
+                    setAudioUrl(songDetails.streamUrl);
+                    setIsPlaying(true);
+                } else {
+                    console.error('Failed to get stream URL');
+                    setIsPlaying(true);
+                }
+            } catch (error) {
+                console.error('Error fetching song stream:', error);
+                setIsPlaying(true);
+            } finally {
+                setIsLoadingAudio(false);
+            }
+        } else {
+            setIsPlaying(true);
+        }
     };
 
     const pauseSong = () => {
         setIsPlaying(false);
     };
 
-    const nextSong = () => {
+    const nextSong = async () => {
         const nextIndex = (currentIndex + 1) % queue.length;
         setCurrentIndex(nextIndex);
-        setCurrentSong(queue[nextIndex]);
-        setIsPlaying(true);
-        setAudioUrl(MOCK_AUDIO_URL);
+        await playSong(queue[nextIndex]);
     };
 
-    const prevSong = () => {
+    const prevSong = async () => {
         const prevIndex = currentIndex === 0 ? queue.length - 1 : currentIndex - 1;
         setCurrentIndex(prevIndex);
-        setCurrentSong(queue[prevIndex]);
-        setIsPlaying(true);
-        setAudioUrl(MOCK_AUDIO_URL);
+        await playSong(queue[prevIndex]);
     };
 
     return (
@@ -51,6 +62,7 @@ export function PlayerProvider({ children }) {
             isPlaying,
             queue,
             audioUrl,
+            isLoadingAudio,
             setAudioUrl,
             playSong,
             pauseSong,

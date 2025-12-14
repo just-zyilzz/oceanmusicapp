@@ -8,7 +8,10 @@ export default async (req, res) => {
     if (req.method === 'OPTIONS') return res.status(200).end();
 
     try {
-        let query = req.query.query || req.query.q;
+        // Support both GET and POST methods
+        let query = req.method === 'POST'
+            ? (req.body?.query || req.body?.q)
+            : (req.query.query || req.query.q);
 
         if (!query) {
             return res.status(400).json({ error: 'Query required' });

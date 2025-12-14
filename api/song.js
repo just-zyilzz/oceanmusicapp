@@ -2,10 +2,15 @@ import ytdl from '@distube/ytdl-core';
 
 export default async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+
     if (req.method === 'OPTIONS') return res.status(200).end();
 
     try {
-        const videoId = req.query.videoId || req.query.id;
+        // Support both GET and POST methods
+        const videoId = req.method === 'POST'
+            ? (req.body?.videoId || req.body?.id)
+            : (req.query.videoId || req.query.id);
 
         if (!videoId) return res.status(400).json({ error: 'videoId required' });
 
