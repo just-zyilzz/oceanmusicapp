@@ -1,4 +1,4 @@
-import { getYouTube } from '../lib/youtube.js';
+import { ytSearch } from '../lib/yt-downloader.js';
 
 export default async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -15,20 +15,21 @@ export default async (req, res) => {
             return res.status(400).json({ error: 'Query required' });
         }
 
-        const yt = await getYouTube();
-        const searchResult = await yt.music.search(query, { type: 'song' });
+        const rawResults = await ytSearch(query);
 
-        const results = searchResult.results.map(song => ({
-            id: song.id,
-            videoId: song.id,
-            title: song.title,
-            artist: song.artists?.[0]?.name || 'Unknown',
-            album: song.album?.name || '',
-            duration: song.duration?.seconds * 1000 || 0,
-            thumbnail: song.thumbnails?.[1]?.url || song.thumbnails?.[0]?.url || '',
-            artists: song.artists,
-            thumbnails: song.thumbnails
-        }));
+        // Filter and map to expected format
+        const results = rawResults
+            .filter(item => item.type === 'video')
+            .map(item => ({
+                id: item.videoId,
+                videoId: item.videoId,
+                title: item.title,
+                artist: item.author?.name || 'Unknown',
+                album: '', // yt-search doesn't give album
+                duration: item.duration?.seconds * 1000 || 0,
+                thumbnail: item.thumbnail || item.image || '',
+                artists: item.author ? [{ name: item.author.name }] : []
+            }));
 
         res.json({
             success: true,
